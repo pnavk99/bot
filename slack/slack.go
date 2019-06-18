@@ -4,13 +4,13 @@ package slack
 import (
 	"fmt"
 
-	"github.com/go-chat-bot/bot"
+	"github.com/pnavk99/bot"
 	"github.com/nlopes/slack"
 )
 
 // MessageFilter allows implementing a filter function to transform the messages
 // before sending to the channel, it is run before the bot sends the message to slack
-type MessageFilter func(string, *bot.User) (string, slack.PostMessageParameters)
+type MessageFilter func(string, *bot.User) (string, slack.FileUploadParameters)
 
 var (
 	rtm      *slack.RTM
@@ -18,24 +18,26 @@ var (
 	teaminfo *slack.TeamInfo
 
 	channelList                 = map[string]slack.Channel{}
-	params                      = slack.PostMessageParameters{AsUser: true}
+	params                      = slack.FileUploadParameters{Title : "Batman Example", Filename: "Batman.txt", Content:"Na na na Batman",}
 	messageFilter MessageFilter = defaultMessageFilter
 	botUserID                   = ""
 )
 
 const protocol = "slack"
 
-func defaultMessageFilter(message string, _ *bot.User) (string, slack.PostMessageParameters) {
+func defaultMessageFilter(message string, _ *bot.User) (string, slack.FileUploadParameters) {
 	return message, params
 }
 
 func responseHandler(target string, message string, sender *bot.User) {
 	message, params := messageFilter(message, sender)
-	_, _, err := api.PostMessage(target, slack.MsgOptionPostMessageParameters(params),
-		slack.MsgOptionText(message, false))
+	file, err := api.UploadFile(params)
 	if err != nil {
 		fmt.Printf("Error sending a slack message: %s\n", err.Error())
+		return
 	}
+	fmt.Println("Name " + file.Name)
+	fmt.Println("URL " + file.URL)
 }
 
 
