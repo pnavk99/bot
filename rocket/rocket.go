@@ -29,7 +29,7 @@ type Config struct {
 	Debug    bool
 }
 
-func responseHandler(target string, message string, sender *bot.User) {
+func ResponseHandler(target string, message string, sender *bot.User) {
 	atUser := sender.RealName
 	if message == "" {
 		return
@@ -58,7 +58,7 @@ func Run(c *Config) {
 	}
 
 	b := bot.New(&bot.Handlers{
-		Response: responseHandler,
+		Response: ResponseHandler,
 	},
 		&bot.Config{
 			Protocol: protocol,

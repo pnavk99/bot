@@ -31,7 +31,7 @@ var (
 
 const protocol = "irc"
 
-func responseHandler(target string, message string, sender *bot.User) {
+func ResponseHandler(target string, message string, sender *bot.User) {
 	channel := target
 	if ircConn.GetNick() == target {
 		channel = sender.Nick
@@ -109,7 +109,7 @@ func SetUp(c *Config) *bot.Bot {
 	ircConn.VerboseCallbackHandler = c.Debug
 
 	b = bot.New(&bot.Handlers{
-		Response: responseHandler,
+		Response: ResponseHandler,
 	},
 		&bot.Config{
 			Protocol: protocol,

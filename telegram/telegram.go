@@ -19,7 +19,7 @@ const (
 	server   = "telegram"
 )
 
-func responseHandler(target string, message string, sender *bot.User) {
+func ResponseHandler(target string, message string, sender *bot.User) {
 	id, err := strconv.ParseInt(target, 10, 64)
 	if err != nil {
 		log.Println(err)
@@ -51,7 +51,7 @@ func Run(token string, debug bool) {
 	}
 
 	b := bot.New(&bot.Handlers{
-		Response: responseHandler,
+		Response: ResponseHandler,
 	}, &bot.Config{
 		Protocol: protocol,
 		Server:   server,

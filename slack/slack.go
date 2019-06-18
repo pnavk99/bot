@@ -3,14 +3,14 @@ package slack
 
 import (
 	"fmt"
-
+	"strings"
 	"github.com/pnavk99/bot"
 	"github.com/nlopes/slack"
 )
 
 // MessageFilter allows implementing a filter function to transform the messages
 // before sending to the channel, it is run before the bot sends the message to slack
-type MessageFilter func(string, *bot.User) (string, slack.FileUploadParameters)
+type MessageFilter func(string, *bot.User) (string, slack.PostMessageParameters)
 
 var (
 	rtm      *slack.RTM
@@ -18,26 +18,39 @@ var (
 	teaminfo *slack.TeamInfo
 
 	channelList                 = map[string]slack.Channel{}
-	params                      = slack.FileUploadParameters{Title : "Batman Example", Filename: "Batman.txt", Content:"Na na na Batman",}
+	messageParams               = slack.PostMessageParameters{AsUser: true}
 	messageFilter MessageFilter = defaultMessageFilter
 	botUserID                   = ""
 )
 
 const protocol = "slack"
 
-func defaultMessageFilter(message string, _ *bot.User) (string, slack.FileUploadParameters) {
-	return message, params
+func defaultMessageFilter(message string, _ *bot.User) (string, slack.PostMessageParameters) {
+	return message, messageParams
 }
 
-func responseHandler(target string, message string, sender *bot.User) {
-	message, params := messageFilter(message, sender)
-	file, err := api.UploadFile(params)
-	if err != nil {
-		fmt.Printf("Error sending a slack message: %s\n", err.Error())
-		return
+func ResponseHandler(target string, message string, sender *bot.User) {
+	message, messageParams := messageFilter(message, sender)
+	messageParts := strings.Split(message,"``")
+
+	if len(messageParts) == 1{
+		_, _, err := api.PostMessage(target, slack.MsgOptionPostMessageParameters(messageParams),
+			slack.MsgOptionText(messageParts[0], false))
+		if err != nil {
+			fmt.Printf("Error sending a slack message: %s\n", err.Error())
+		}
+	}else if len(messageParts) == 2{
+		_, err := api.UploadFile(slack.FileUploadParameters{
+			Channels: []string{target},
+			Content: messageParts[1],
+			Filename: "Response.txt",
+			InitialComment: messageParts[0],
+		})
+		if err != nil {
+			fmt.Printf("Error sending a slack message: %s\n", err.Error())
+			return
+		}
 	}
-	fmt.Println("Name " + file.Name)
-	fmt.Println("URL " + file.URL)
 }
 
 
@@ -133,7 +146,7 @@ func Run(token string) {
 	teaminfo, _ = api.GetTeamInfo()
 
 	b := bot.New(&bot.Handlers{
-		Response: responseHandler,
+		Response: ResponseHandler,
 	},
 		&bot.Config{
 			Protocol: protocol,

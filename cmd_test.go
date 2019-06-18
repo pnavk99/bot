@@ -46,7 +46,7 @@ func waitMessages(t *testing.T, count int, errorCount int) {
 	}
 }
 
-func responseHandler(target string, message string, sender *User) {
+func ResponseHandler(target string, message string, sender *User) {
 	channel = target
 	user = sender
 	replies <- message
@@ -71,7 +71,7 @@ func reset() {
 
 func newBot() *Bot {
 	return New(&Handlers{
-		Response: responseHandler,
+		Response: ResponseHandler,
 		Errored:  errorHandler,
 	},
 		&Config{
@@ -97,7 +97,7 @@ func TestPeriodicCommands(t *testing.T) {
 			CmdFunc:  func(channel string) (string, error) { return "ok " + channel, nil },
 		})
 	b := New(
-		&Handlers{Response: responseHandler},
+		&Handlers{Response: ResponseHandler},
 		&Config{Protocol: "test", Server: "test"},
 	)
 	defer b.Close()
@@ -133,7 +133,7 @@ func TestMultiplePeriodicCommands(t *testing.T) {
 			CmdFunc:  func(channel string) (string, error) { return "ok_afternoon " + channel, nil },
 		})
 	b := New(
-		&Handlers{Response: responseHandler},
+		&Handlers{Response: ResponseHandler},
 		&Config{Protocol: "test", Server: "test"},
 	)
 	defer b.Close()
@@ -710,8 +710,8 @@ func TestMessageStreams(t *testing.T) {
 		return nil
 	})
 
-	b1 := New(&Handlers{Response: responseHandler, Errored: errorHandler}, &Config{Protocol: "protoA", Server: "test"})
-	b2 := New(&Handlers{Response: responseHandler, Errored: errorHandler}, &Config{Protocol: "protoB", Server: "test"})
+	b1 := New(&Handlers{Response: ResponseHandler, Errored: errorHandler}, &Config{Protocol: "protoA", Server: "test"})
+	b2 := New(&Handlers{Response: ResponseHandler, Errored: errorHandler}, &Config{Protocol: "protoB", Server: "test"})
 
 	msmB1 := MessageStreamMessage{
 		Message:     "hello botOne",

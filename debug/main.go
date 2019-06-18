@@ -31,7 +31,7 @@ import (
 	_ "github.com/go-chat-bot/plugins/web"
 )
 
-func responseHandler(target string, message string, sender *bot.User) {
+func ResponseHandler(target string, message string, sender *bot.User) {
 	if message == "" {
 		return
 	}
@@ -40,7 +40,7 @@ func responseHandler(target string, message string, sender *bot.User) {
 
 func main() {
 	b := bot.New(&bot.Handlers{
-		Response: responseHandler,
+		Response: ResponseHandler,
 	},
 		&bot.Config{
 			Protocol: "debug",

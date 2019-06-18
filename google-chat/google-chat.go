@@ -35,7 +35,7 @@ type Config struct {
 	WelcomeMessage   string
 }
 
-func responseHandler(target string, message string, sender *bot.User) {
+func ResponseHandler(target string, message string, sender *bot.User) {
 	var space, thread string
 
 	// this define thread in the reply if we can so we don't alwayus start new
@@ -105,7 +105,7 @@ func Run(config *Config) {
 	}
 
 	b = bot.New(&bot.Handlers{
-		Response: responseHandler,
+		Response: ResponseHandler,
 	},
 		&bot.Config{
 			Protocol: protocol,
