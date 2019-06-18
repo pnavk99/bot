@@ -16,7 +16,6 @@ var (
 	rtm      *slack.RTM
 	api      *slack.Client
 	teaminfo *slack.TeamInfo
-
 	channelList                 = map[string]slack.Channel{}
 	messageFilter MessageFilter = defaultMessageFilter
 	botUserID                   = ""
@@ -25,11 +24,11 @@ var (
 const protocol = "slack"
 
 func defaultMessageFilter(message string, _ *bot.User) (string, slack.FileUploadParameters) {
-	return message, params
+	return message
 }
 
 func responseHandler(target string, message string, sender *bot.User) {
-	message, _ := messageFilter(message, sender)
+	message := messageFilter(message, sender)
 	params := slack.FileUploadParameters{
 		Title: "Batman Example",
 		Content:  "Nan Nan Nan Nan Nan Nan Nan Nan Batman",
