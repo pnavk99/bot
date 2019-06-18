@@ -10,7 +10,7 @@ import (
 
 // MessageFilter allows implementing a filter function to transform the messages
 // before sending to the channel, it is run before the bot sends the message to slack
-type MessageFilter func(string, *bot.User) (string)
+type MessageFilter func(string, *bot.User) string
 
 var (
 	rtm      *slack.RTM
@@ -24,7 +24,7 @@ var (
 
 const protocol = "slack"
 
-func defaultMessageFilter(message string, _ *bot.User) (string) {
+func defaultMessageFilter(message string, _ *bot.User) string {
 	return message
 }
 
