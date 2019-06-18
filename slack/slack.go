@@ -18,7 +18,6 @@ var (
 	teaminfo *slack.TeamInfo
 
 	channelList                 = map[string]slack.Channel{}
-	params                      = slack.FileUploadParameters{}
 	messageFilter MessageFilter = defaultMessageFilter
 	botUserID                   = ""
 )
@@ -30,8 +29,12 @@ func defaultMessageFilter(message string, _ *bot.User) (string, slack.FileUpload
 }
 
 func responseHandler(target string, message string, sender *bot.User) {
-	message, params := messageFilter(message, sender)
-	_, err := api.UploadFile(slack.FileUploadParameters{Channels:[target],Content:message})
+	message, _ := messageFilter(message, sender)
+	params := slack.FileUploadParameters{
+		Title: "Batman Example",
+		Content:  "Nan Nan Nan Nan Nan Nan Nan Nan Batman",
+	}
+	_, err := api.UploadFile(params)
 	if err != nil {
 		fmt.Printf("Error sending a slack message: %s\n", err.Error())
 	}
