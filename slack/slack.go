@@ -31,7 +31,7 @@ func defaultMessageFilter(message string, _ *bot.User) (string, slack.FileUpload
 
 func responseHandler(target string, message string, sender *bot.User) {
 	message, params := messageFilter(message, sender)
-	_, err := api.UploadFile({Channels:[target],Content:message})
+	_, err := api.UploadFile(slack.FileUploadParameters{Channels:[target],Content:message})
 	if err != nil {
 		fmt.Printf("Error sending a slack message: %s\n", err.Error())
 	}
