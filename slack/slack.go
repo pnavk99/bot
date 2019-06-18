@@ -16,6 +16,7 @@ var (
 	rtm      *slack.RTM
 	api      *slack.Client
 	teaminfo *slack.TeamInfo
+	params
 	channelList                 = map[string]slack.Channel{}
 	messageFilter MessageFilter = defaultMessageFilter
 	botUserID                   = ""
