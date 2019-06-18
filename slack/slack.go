@@ -10,35 +10,34 @@ import (
 
 // MessageFilter allows implementing a filter function to transform the messages
 // before sending to the channel, it is run before the bot sends the message to slack
-type MessageFilter func(string, *bot.User) string
+type MessageFilter func(string, *bot.User) (string, slack.PostMessageParameters)
 
 var (
 	rtm      *slack.RTM
 	api      *slack.Client
 	teaminfo *slack.TeamInfo
-	params slack.FileUploadParameters
+
 	channelList                 = map[string]slack.Channel{}
+	params                      = slack.PostMessageParameters{AsUser: true}
 	messageFilter MessageFilter = defaultMessageFilter
 	botUserID                   = ""
 )
 
 const protocol = "slack"
 
-func defaultMessageFilter(message string, _ *bot.User) string {
-	return message
+func defaultMessageFilter(message string, _ *bot.User) (string, slack.PostMessageParameters) {
+	return message, params
 }
 
 func responseHandler(target string, message string, sender *bot.User) {
-	message := messageFilter(message, sender)
-	params = slack.FileUploadParameters{
-		Title: "Batman Example",
-		Content:  "Nan Nan Nan Nan Nan Nan Nan Nan Batman",
-	}
-	_, err := api.UploadFile(params)
+	message, params := messageFilter(message, sender)
+	_, _, err := api.PostMessage(target, slack.MsgOptionPostMessageParameters(params),
+		slack.MsgOptionText(message, false))
 	if err != nil {
 		fmt.Printf("Error sending a slack message: %s\n", err.Error())
 	}
 }
+
 
 // FindUserBySlackID converts a slack.User into a bot.User struct
 func FindUserBySlackID(userID string) *bot.User {
